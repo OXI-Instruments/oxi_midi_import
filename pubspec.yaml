@@ -1,0 +1,14 @@
+name: oxi_midi_import
+description: "OXI Instruments MIDI importer package."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  collection: ^1.19.1
+  dart_midi_pro: ^1.0.4+2
+
+dev_dependencies:
+  test: ^1.24.0
