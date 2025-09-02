@@ -36,7 +36,7 @@ class PolyPattern {
   String toString() {
     final List<String> lines = [];
 
-    for (int j = 0; j < 8; j++) {
+    for (int j = 0; j < 7; j++) {
       String line = '';
 
       for (int i = 0; i < steps.length; i++) {
