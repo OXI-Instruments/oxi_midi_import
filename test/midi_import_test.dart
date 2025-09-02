@@ -35,8 +35,6 @@ void main() {
     }
   });
 
-
-
   test('MIDI import for Reason pattern with test5 (poly)', () async {
     final file = File('test/assets/reason-export-test5.mid');
     final pattern = await PolyPatternImporter.importPattern(file);
@@ -44,25 +42,141 @@ void main() {
     // 8 bars with 16 steps each
     expect(pattern.steps.length, equals(8 * 16));
 
-    int barIndex = 0;
-    final int stepsPerBar = 16;
-    
-    testChord(pattern, barIndex, 2 * stepsPerBar, new PolyPatternStep(notes: [48, 60, 63, 67, 72, 76, 80], gates: [], offsets: [], velocities: []));
-    testChord(pattern, barIndex+=2 * 16, 2 * stepsPerBar, new PolyPatternStep(notes: [46, 60, 64, 67, 71, 76], gates: [], offsets: [], velocities: []));
-    testChord(pattern, barIndex++ * stepsPerBar, stepsPerBar, new PolyPatternStep(notes: [46, 57, 62, 67, 69], gates: [], offsets: [], velocities: []));
-    testChord(pattern, barIndex++ * stepsPerBar, stepsPerBar, new PolyPatternStep(notes: [46, 57, 62, 67, 75], gates: [], offsets: [], velocities: []));
-    testChord(pattern, barIndex++ * stepsPerBar, stepsPerBar, new PolyPatternStep(notes: [46, 57, 62, 67, 75], gates: [], offsets: [], velocities: []));
-    testChord(pattern, barIndex++ * stepsPerBar, stepsPerBar, new PolyPatternStep(notes: [54, 65, 70, 75], gates: [], offsets: [], velocities: []));
-    testChord(pattern, barIndex++ * stepsPerBar, stepsPerBar, new PolyPatternStep(notes: [59, 70, 75, 80], gates: [], offsets: [], velocities: []));
+    verifyNotes(pattern, startStep: 0, endStep: 32, notes: [48, 60, 63, 67, 72, 76, 80]);
+    verifyTiedNoteGates(pattern, startStep: 0, endStep: 32, noteCount: 7);
+    verifyNoteOffsets(pattern, startStep: 0, endStep: 32, noteCount: 7, offset: 0);
+    verifyNoteVelocities(pattern, startStep: 0, endStep: 32, noteCount: 7, velocity: 100);
+
+    verifyNotes(pattern, startStep: 32, endStep: 64, notes: [46, 60, 64, 67, 71, 76, 82]);
+    verifyTiedNoteGates(pattern, startStep: 32, endStep: 64, noteCount: 7);
+    verifyNoteOffsets(pattern, startStep: 32, endStep: 64, noteCount: 7, offset: 0);
+    verifyNoteVelocities(pattern, startStep: 32, endStep: 64, noteCount: 7, velocity: 100);
+
+    verifyNotes(pattern, startStep: 64, endStep: 80, notes: [46, 57, 62, 67, 69]);
+    verifyTiedNoteGates(pattern, startStep: 64, endStep: 80, noteCount: 5);
+    verifyNoteOffsets(pattern, startStep: 64, endStep: 80, noteCount: 5, offset: 0);
+    verifyNoteVelocities(pattern, startStep: 64, endStep: 80, noteCount: 5, velocity: 100);
+
+    verifyNotes(pattern, startStep: 80, endStep: 96, notes: [46, 57, 62, 67, 75]);
+    verifyTiedNoteGates(pattern, startStep: 80, endStep: 96, noteCount: 5);
+    verifyNoteOffsets(pattern, startStep: 80, endStep: 96, noteCount: 5, offset: 0);
+    verifyNoteVelocities(pattern, startStep: 80, endStep: 96, noteCount: 5, velocity: 100);
+
+    verifyNotes(pattern, startStep: 96, endStep: 112, notes: [54, 65, 70, 75, 83]);
+    verifyTiedNoteGates(pattern, startStep: 96, endStep: 112, noteCount: 5);
+    verifyNoteOffsets(pattern, startStep: 96, endStep: 112, noteCount: 5, offset: 0);
+    verifyNoteVelocities(pattern, startStep: 96, endStep: 112, noteCount: 5, velocity: 100);
+  });
+
+  test('Chords per beat', () async {
+    final file = File('test/assets/Ableton_chords_per_beat.mid');
+    final pattern = await PolyPatternImporter.importPattern(file);
+
+    expect(pattern.steps.length, 13);
+
+    verifyNotes(pattern, startStep: 0, endStep: 1, notes: [60, 63, 66]);
+    verifyTiedNoteGates(pattern, startStep: 0, endStep: 1, noteCount: 3);
+    verifyNoteVelocities(pattern, startStep: 0, endStep: 1, noteCount: 3, velocity: 100);
+
+    verifyNoNotes(pattern, startStep: 1, endStep: 3);
+
+    verifyNotes(pattern, startStep: 4, endStep: 5, notes: [60, 64, 66]);
+    verifyTiedNoteGates(pattern, startStep: 4, endStep: 5, noteCount: 3);
+    verifyNoteVelocities(pattern, startStep: 4, endStep: 5, noteCount: 3, velocity: 100);
+
+    verifyNoNotes(pattern, startStep: 5, endStep: 7);
+
+    verifyNotes(pattern, startStep: 8, endStep: 9, notes: [60, 63, 66]);
+    verifyTiedNoteGates(pattern, startStep: 8, endStep: 9, noteCount: 3);
+    verifyNoteVelocities(pattern, startStep: 8, endStep: 9, noteCount: 3, velocity: 100);
+
+    verifyNoNotes(pattern, startStep: 9, endStep: 11);
+
+    verifyNotes(pattern, startStep: 12, endStep: 13, notes: [60, 64, 66]);
+    verifyTiedNoteGates(pattern, startStep: 12, endStep: 13, noteCount: 3);
+    verifyNoteVelocities(pattern, startStep: 12, endStep: 13, noteCount: 3, velocity: 100);
   });
 }
 
-void testChord(PolyPattern pattern, int startStep, int chordStepCount, PolyPatternStep chord) {
-  for (int j = startStep; j < chordStepCount; j++) {
-    for (int i = 0; i < chord.notes.length; i++) {
-      expect(pattern.steps[j].notes[i], chord.notes[i]);
-      expect(pattern.steps[j].gates[i], j != chordStepCount - 1 ? 1 : closeTo(1, 0.05));
+// -------------------------------------------
+// Helpers
+// -------------------------------------------
+
+// Verify that in the step range of [startStep, endStep) all notes are -1 in value.
+void verifyNoNotes(PolyPattern pattern, {required int startStep, required int endStep}) {
+  for (int j = startStep; j < endStep; j++) {
+    for (int i = 0; i < PolyPattern.kMaxNotesPerStep; i++) {
+      expect(pattern.steps[j].notes[i], -1);
+    }
+  }
+}
+
+// Verify that in the step range of [startStep, endStep) all notes are equal to the given [notes]
+// and all other notes are -1.
+void verifyNotes(
+  PolyPattern pattern, {
+  required int startStep,
+  required int endStep,
+  required List<int> notes,
+}) {
+  for (int j = startStep; j < endStep; j++) {
+    for (int i = 0; i < notes.length; i++) {
+      expect(pattern.steps[j].notes[i], notes[i]);
+    }
+    for (int i = notes.length; i < PolyPattern.kMaxNotesPerStep; i++) {
+      expect(pattern.steps[j].notes[i], -1);
+    }
+  }
+}
+
+// Verify that in the step range of [startStep, endStep) the [noteCount] number of notes have
+// gate 1 and are tied, and at the last step they are released with a gate < 1.
+void verifyTiedNoteGates(PolyPattern pattern, {required int startStep, required int endStep, required int noteCount}) {
+  for (int j = startStep; j < endStep; j++) {
+    for (int i = 0; i < noteCount; i++) {
+      final isLastStep = j == (endStep - 1);
+      expect(pattern.steps[j].gates[i], isLastStep ? closeTo(1, 0.05) : equals(1));
+    }
+    for (int i = noteCount; i < PolyPattern.kMaxNotesPerStep; i++) {
+      expect(pattern.steps[j].notes[i], -1);
+    }
+  }
+}
+
+// Verify that in the step range of [startStep, endStep) all [noteCount] notes have the given offset,
+// and the rest of the notes have 0 offset.
+void verifyNoteOffsets(
+  PolyPattern pattern, {
+  required int startStep,
+  required int endStep,
+  required int noteCount,
+  required int offset,
+}) {
+  for (int j = startStep; j < endStep; j++) {
+    for (int i = 0; i < noteCount; i++) {
+      expect(pattern.steps[j].offsets[i], offset);
+    }
+    for (int i = noteCount; i < PolyPattern.kMaxNotesPerStep; i++) {
       expect(pattern.steps[j].offsets[i], 0);
+    }
+  }
+}
+
+
+// Verify that in the step range of [startStep, endStep) all [noteCount] notes have the given velocity,
+// and the rest of the notes have 100 velocity.
+void verifyNoteVelocities(
+  PolyPattern pattern, {
+  required int startStep,
+  required int endStep,
+  required int noteCount,
+  required int velocity,
+}) {
+  for (int j = startStep; j < endStep; j++) {
+    for (int i = 0; i < noteCount; i++) {
+      expect(pattern.steps[j].velocities[i], velocity);
+    }
+    for (int i = noteCount; i < PolyPattern.kMaxNotesPerStep; i++) {
       expect(pattern.steps[j].velocities[i], 100);
     }
   }
