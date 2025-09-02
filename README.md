@@ -1,5 +1,8 @@
 # OXI Midi Import
 
+[![Dart CI](https://github.com/OXI-Instruments/oxi_midi_import/actions/workflows/test.yml/badge.svg)](https://github.com/OXI-Instruments/oxi_midi_import/actions/workflows/test.yml)
+
+
 Dart package used by the OXI App to import monophonic, polyphonic sequences and grooves from MIDI files.
 
 ## Getting Started
