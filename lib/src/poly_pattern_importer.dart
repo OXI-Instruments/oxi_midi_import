@@ -7,13 +7,11 @@ import 'package:oxi_midi_import/src/utilities/midi_event_helpers.dart';
 import 'package:oxi_midi_import/src/utilities/midi_to_pattern_converter.dart';
 
 final class PolyPatternImporter {
-  static const _maxPatternLength = 1000000; // NOTE: some big number
   static const _minimumStepCount = 8;
   static const _defaultTicksPerStep = 24;
 
   static Future<PolyPattern> importPattern(File file) async {
     final bytes = await file.readAsBytes();
-    //final name = FileHelpers.getFileNameWithoutExtension(result);
 
     final midi = MidiParser().parseMidiFromBuffer(bytes);
     final ticksPerStep = (midi.header.ticksPerBeat ?? _defaultTicksPerStep * 4) ~/ 4;

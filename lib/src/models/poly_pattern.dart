@@ -11,10 +11,10 @@ class PolyPatternStep {
 
   factory PolyPatternStep.empty() {
     return PolyPatternStep(
-      notes: List.generate(7, (index) => -1),
-      gates: List.generate(7, (index) => 0),
-      offsets: List.generate(7, (index) => 0),
-      velocities: List.generate(7, (index) => 100),
+      notes: List.generate(PolyPattern.kMaxNotesPerStep, (index) => -1),
+      gates: List.generate(PolyPattern.kMaxNotesPerStep, (index) => 0),
+      offsets: List.generate(PolyPattern.kMaxNotesPerStep, (index) => 0),
+      velocities: List.generate(PolyPattern.kMaxNotesPerStep, (index) => 100),
     );
   }
 }
@@ -23,6 +23,7 @@ class PolyPatternStep {
 class PolyPattern {
   static const kMidiNoteMin = 0;
   static const kMidiNoteMax = 127;
+  static const kMaxNotesPerStep = 7;
 
   final List<PolyPatternStep> steps;
 
@@ -36,7 +37,7 @@ class PolyPattern {
   String toString() {
     final List<String> lines = [];
 
-    for (int j = 0; j < 7; j++) {
+    for (int j = 0; j < kMaxNotesPerStep; j++) {
       String line = '';
 
       for (int i = 0; i < steps.length; i++) {
