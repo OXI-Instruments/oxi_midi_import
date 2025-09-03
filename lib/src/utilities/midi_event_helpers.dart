@@ -27,6 +27,21 @@ class MidiEventHelpers {
                 duration: time - item.$2,
               ),
             );
+            runningNotes.remove(event.noteNumber);
+          }
+          break;
+        case EndOfTrackEvent():
+          // End all running notes
+          for (final entry in runningNotes.entries) {
+            final item = entry.value;
+            notes.add(
+              Note(
+                timestamp: item.$2,
+                note: item.$1.noteNumber,
+                velocity: item.$1.velocity,
+                duration: time - item.$2,
+              ),
+            );
           }
           break;
       }

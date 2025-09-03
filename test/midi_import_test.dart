@@ -67,10 +67,10 @@ void main() {
     verifyNoteOffsets(pattern, startStep: 96, endStep: 112, noteCount: 5, offset: 0);
     verifyNoteVelocities(pattern, startStep: 96, endStep: 112, noteCount: 5, velocities: [100, 100, 100, 100, 100]);
     
-    verifyNotes(pattern, startStep: 112, endStep: 128, notes: [0, 65, 70, 75, 127]);
+    verifyNotes(pattern, startStep: 112, endStep: 128, notes: [0, 70, 75, 80, 127]);
     verifyTiedNoteGates(pattern, startStep: 112, endStep: 128, noteCount: 5);
     verifyNoteOffsets(pattern, startStep: 112, endStep: 128, noteCount: 5, offset: 0);
-    verifyNoteVelocities(pattern, startStep: 112, endStep: 128, noteCount: 5, velocities: [100, 100, 100, 100, 100]);
+    verifyNoteVelocities(pattern, startStep: 112, endStep: 128, noteCount: 5, velocities: [1, 100, 100, 100, 127]);
   });
 
   test('Chords per beat', () async {
