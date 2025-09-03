@@ -42,30 +42,35 @@ void main() {
     // 8 bars with 16 steps each
     expect(pattern.steps.length, equals(8 * 16));
 
-    verifyNotes(pattern, startStep: 0, endStep: 32, notes: [48, 60, 63, 67, 72, 76, 80]);
+    verifyNotes(pattern, startStep: 0, endStep: 32, notes: [0, 60, 63, 67, 72, 76, 127]);
     verifyTiedNoteGates(pattern, startStep: 0, endStep: 32, noteCount: 7);
     verifyNoteOffsets(pattern, startStep: 0, endStep: 32, noteCount: 7, offset: 0);
-    verifyNoteVelocities(pattern, startStep: 0, endStep: 32, noteCount: 7, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 0, endStep: 32, noteCount: 7, velocities: [1, 100, 100, 100, 100, 100, 127]);
 
     verifyNotes(pattern, startStep: 32, endStep: 64, notes: [46, 60, 64, 67, 71, 76, 82]);
     verifyTiedNoteGates(pattern, startStep: 32, endStep: 64, noteCount: 7);
     verifyNoteOffsets(pattern, startStep: 32, endStep: 64, noteCount: 7, offset: 0);
-    verifyNoteVelocities(pattern, startStep: 32, endStep: 64, noteCount: 7, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 32, endStep: 64, noteCount: 7, velocities: [100, 80, 100, 100, 100, 100, 100]);
 
     verifyNotes(pattern, startStep: 64, endStep: 80, notes: [46, 57, 62, 67, 69]);
     verifyTiedNoteGates(pattern, startStep: 64, endStep: 80, noteCount: 5);
     verifyNoteOffsets(pattern, startStep: 64, endStep: 80, noteCount: 5, offset: 0);
-    verifyNoteVelocities(pattern, startStep: 64, endStep: 80, noteCount: 5, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 64, endStep: 80, noteCount: 5, velocities: [100, 100, 100, 100, 100]);
 
     verifyNotes(pattern, startStep: 80, endStep: 96, notes: [46, 57, 62, 67, 75]);
     verifyTiedNoteGates(pattern, startStep: 80, endStep: 96, noteCount: 5);
     verifyNoteOffsets(pattern, startStep: 80, endStep: 96, noteCount: 5, offset: 0);
-    verifyNoteVelocities(pattern, startStep: 80, endStep: 96, noteCount: 5, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 80, endStep: 96, noteCount: 5, velocities: [100, 100, 100, 100, 20]);
 
     verifyNotes(pattern, startStep: 96, endStep: 112, notes: [54, 65, 70, 75, 83]);
     verifyTiedNoteGates(pattern, startStep: 96, endStep: 112, noteCount: 5);
     verifyNoteOffsets(pattern, startStep: 96, endStep: 112, noteCount: 5, offset: 0);
-    verifyNoteVelocities(pattern, startStep: 96, endStep: 112, noteCount: 5, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 96, endStep: 112, noteCount: 5, velocities: [100, 100, 100, 100, 100]);
+    
+    verifyNotes(pattern, startStep: 112, endStep: 128, notes: [0, 65, 70, 75, 127]);
+    verifyTiedNoteGates(pattern, startStep: 112, endStep: 128, noteCount: 5);
+    verifyNoteOffsets(pattern, startStep: 112, endStep: 128, noteCount: 5, offset: 0);
+    verifyNoteVelocities(pattern, startStep: 112, endStep: 128, noteCount: 5, velocities: [100, 100, 100, 100, 100]);
   });
 
   test('Chords per beat', () async {
@@ -76,25 +81,25 @@ void main() {
 
     verifyNotes(pattern, startStep: 0, endStep: 1, notes: [60, 63, 66]);
     verifyTiedNoteGates(pattern, startStep: 0, endStep: 1, noteCount: 3);
-    verifyNoteVelocities(pattern, startStep: 0, endStep: 1, noteCount: 3, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 0, endStep: 1, noteCount: 3, velocities: [100, 100, 100]);
 
     verifyNoNotes(pattern, startStep: 1, endStep: 3);
 
     verifyNotes(pattern, startStep: 4, endStep: 5, notes: [60, 64, 66]);
     verifyTiedNoteGates(pattern, startStep: 4, endStep: 5, noteCount: 3);
-    verifyNoteVelocities(pattern, startStep: 4, endStep: 5, noteCount: 3, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 4, endStep: 5, noteCount: 3, velocities: [100, 100, 100]);
 
     verifyNoNotes(pattern, startStep: 5, endStep: 7);
 
     verifyNotes(pattern, startStep: 8, endStep: 9, notes: [60, 63, 66]);
     verifyTiedNoteGates(pattern, startStep: 8, endStep: 9, noteCount: 3);
-    verifyNoteVelocities(pattern, startStep: 8, endStep: 9, noteCount: 3, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 8, endStep: 9, noteCount: 3, velocities: [100, 100, 100]);
 
     verifyNoNotes(pattern, startStep: 9, endStep: 11);
 
     verifyNotes(pattern, startStep: 12, endStep: 13, notes: [60, 64, 66]);
     verifyTiedNoteGates(pattern, startStep: 12, endStep: 13, noteCount: 3);
-    verifyNoteVelocities(pattern, startStep: 12, endStep: 13, noteCount: 3, velocity: 100);
+    verifyNoteVelocities(pattern, startStep: 12, endStep: 13, noteCount: 3, velocities: [100, 100, 100]);
   });
 }
 
@@ -170,11 +175,11 @@ void verifyNoteVelocities(
   required int startStep,
   required int endStep,
   required int noteCount,
-  required int velocity,
+  required List<int> velocities,
 }) {
   for (int j = startStep; j < endStep; j++) {
     for (int i = 0; i < noteCount; i++) {
-      expect(pattern.steps[j].velocities[i], velocity);
+      expect(pattern.steps[j].velocities[i], velocities[i]);
     }
     for (int i = noteCount; i < PolyPattern.kMaxNotesPerStep; i++) {
       expect(pattern.steps[j].velocities[i], 100);
