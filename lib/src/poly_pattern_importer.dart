@@ -12,7 +12,6 @@ final class PolyPatternImporter {
 
   static Future<PolyPattern> importPattern(File file) async {
     final bytes = await file.readAsBytes();
-    //final name = FileHelpers.getFileNameWithoutExtension(result);
 
     final midi = MidiParser().parseMidiFromBuffer(bytes);
     final ticksPerStep = (midi.header.ticksPerBeat ?? _defaultTicksPerStep * 4) ~/ 4;
