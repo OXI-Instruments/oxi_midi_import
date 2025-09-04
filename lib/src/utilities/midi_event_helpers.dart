@@ -5,7 +5,7 @@ class MidiEventHelpers {
   static const defaultTicksPerStep = 24;
 
   // Converts NoteOnEvent and NoteOffEvent to Notes with duration and absolute timestamp.
-  static List<Note> notesFromMidiEvents(List<MidiEvent> events, {int ticksPerStep = defaultTicksPerStep}) {
+  static List<Note> notesFromMidiEvents(List<MidiEvent> events) {
     final List<Note> notes = [];
 
     int time = 0;

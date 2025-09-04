@@ -27,13 +27,8 @@ final class PolyPatternImporter {
 
     List<MidiEvent> midiEvents = midi.tracks[trackIndex];
 
-    if (ticksPerStep != _defaultTicksPerStep) {
-      midiEvents = MidiEventHelpers.retimeMidiEvents(midiEvents, _defaultTicksPerStep, ticksPerStep);
-      length = (length * _defaultTicksPerStep / ticksPerStep).ceil();
-    }
-
-    final notes = MidiEventHelpers.notesFromMidiEvents(midiEvents, ticksPerStep: ticksPerStep);
-    final pattern = MidiToPatternConverter.createPolyPatternFrom(notes, length);
+    final notes = MidiEventHelpers.notesFromMidiEvents(midiEvents);
+    final pattern = MidiToPatternConverter.createPolyPatternFrom(notes, length, ticksPerStep: ticksPerStep);
 
     return pattern;
   }

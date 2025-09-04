@@ -14,7 +14,7 @@ final class MonoPatternImporter {
     final bytes = await file.readAsBytes();
 
     final midi = MidiParser().parseMidiFromBuffer(bytes);
-    final ticksPerStep = (midi.header.ticksPerBeat ?? 96) ~/ 4;
+    final ticksPerStep = (midi.header.ticksPerBeat ?? _defaultTicksPerStep * 4) ~/ 4;
 
     // Find the first track with NoteOn events
     int trackIndex = midi.tracks.indexWhere((track) => track.any((event) => event is NoteOnEvent));
@@ -24,13 +24,8 @@ final class MonoPatternImporter {
 
     List<MidiEvent> midiEvents = midi.tracks[trackIndex];
 
-    if (ticksPerStep != _defaultTicksPerStep) {
-      midiEvents = MidiEventHelpers.retimeMidiEvents(midiEvents, _defaultTicksPerStep, ticksPerStep);
-      length = (length * _defaultTicksPerStep / ticksPerStep).ceil();
-    }
-
-    final notes = MidiEventHelpers.notesFromMidiEvents(midiEvents, ticksPerStep: ticksPerStep);
-    final pattern = MidiToPatternConverter.createMonoPatternFrom(notes, length);
+    final notes = MidiEventHelpers.notesFromMidiEvents(midiEvents);
+    final pattern = MidiToPatternConverter.createMonoPatternFrom(notes, length, ticksPerStep: ticksPerStep);
 
     return pattern;
   }
