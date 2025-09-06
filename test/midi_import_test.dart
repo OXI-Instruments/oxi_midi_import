@@ -138,6 +138,42 @@ void main() {
     verifyTiedNoteGates(pattern, startStep: 12, endStep: 13, gates: [1, 1, 1]);
     verifyNoteVelocities(pattern, startStep: 12, endStep: 13, velocities: [100, 100, 100]);
   });
+
+  test('Notes with offset', () async {
+    final file = File('test/assets/notes_with_offset.mid');
+    final pattern = await PolyPatternImporter.importPattern(file);
+
+    expect(pattern.steps.length, 8);
+
+    expect(pattern.steps[0].notes[0], 60);
+    expect(pattern.steps[0].offsets[0], closeTo(0.16, 0.01));
+    expect(pattern.steps[0].velocities[0], 100);
+
+    expect(pattern.steps[4].notes[0], 60);
+    expect(pattern.steps[4].offsets[0], closeTo(0.5, 0.01));
+    expect(pattern.steps[4].velocities[0], 100);
+
+    verifyNote(pattern, start: 0.166666, length: 0.58, note: 60, velocity: 100, noteIndex: 0);
+    verifyNote(pattern, start: 4.5, length: 1.5, note: 60, velocity: 100, noteIndex: 0);
+  });
+
+  test('Notes with offset', () async {
+    final file = File('test/assets/notes_with_offset.mid');
+    final pattern = await PolyPatternImporter.importPattern(file);
+
+    expect(pattern.steps.length, 8);
+
+    expect(pattern.steps[0].notes[0], 60);
+    expect(pattern.steps[0].offsets[0], closeTo(0.16, 0.01));
+    expect(pattern.steps[0].velocities[0], 100);
+
+    expect(pattern.steps[4].notes[0], 60);
+    expect(pattern.steps[4].offsets[0], closeTo(0.5, 0.01));
+    expect(pattern.steps[4].velocities[0], 100);
+
+    verifyNote(pattern, start: 0.166666, length: 0.58, note: 60, velocity: 100, noteIndex: 0);
+    verifyNote(pattern, start: 4.5, length: 1.5, note: 60, velocity: 100, noteIndex: 0);
+  });
 }
 
 // -------------------------------------------
@@ -222,6 +258,46 @@ void verifyNoteVelocities(
     }
     for (int i = velocities.length; i < PolyPattern.kMaxNotesPerStep; i++) {
       expect(pattern.steps[j].velocities[i], 100);
+    }
+  }
+}
+
+/// Verify that in the given [pattern] at the given [start] step there is a note with the given parameters.
+/// [start] and [length] units are in steps and are doubles.
+void verifyNote(
+  PolyPattern pattern, {
+  required double start,
+  required double length,
+  int note = 60,
+  int velocity = 100,
+  int noteIndex = 0,
+  double threshold = 0.05,
+}) {
+  int startStep = start.floor();
+  int endStep = (start + length).ceil();
+
+  for (int j = startStep; j < endStep; j++) {
+    final isFirst = j == startStep;
+    final isLast = j == (endStep - 1);
+
+    if (isFirst && isLast) {
+      final offset = start - startStep;
+      final gate = length;
+      expect(pattern.steps[j].notes[noteIndex], note);
+      expect(pattern.steps[j].velocities[noteIndex], velocity);
+      expect(pattern.steps[j].offsets[noteIndex], closeTo(offset, threshold));
+      expect(pattern.steps[j].gates[noteIndex], closeTo(gate, threshold));
+    } else {
+      final offset = isFirst ? start - startStep : 0;
+      final gate = isLast
+          ? (start + length - endStep + 1)
+          : isFirst
+          ? (1 - start + startStep)
+          : 1;
+      expect(pattern.steps[j].notes[noteIndex], note);
+      expect(pattern.steps[j].velocities[noteIndex], velocity);
+      expect(pattern.steps[j].offsets[noteIndex], closeTo(offset, threshold));
+      expect(pattern.steps[j].gates[noteIndex], closeTo(gate, threshold));
     }
   }
 }
