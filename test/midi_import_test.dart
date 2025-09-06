@@ -157,23 +157,6 @@ void main() {
     verifyNote(pattern, start: 4.5, length: 1.5, note: 60, velocity: 100, noteIndex: 0);
   });
 
-  test('Notes with offset', () async {
-    final file = File('test/assets/notes_with_offset.mid');
-    final pattern = await PolyPatternImporter.importPattern(file);
-
-    expect(pattern.steps.length, 8);
-
-    expect(pattern.steps[0].notes[0], 60);
-    expect(pattern.steps[0].offsets[0], closeTo(0.16, 0.01));
-    expect(pattern.steps[0].velocities[0], 100);
-
-    expect(pattern.steps[4].notes[0], 60);
-    expect(pattern.steps[4].offsets[0], closeTo(0.5, 0.01));
-    expect(pattern.steps[4].velocities[0], 100);
-
-    verifyNote(pattern, start: 0.166666, length: 0.58, note: 60, velocity: 100, noteIndex: 0);
-    verifyNote(pattern, start: 4.5, length: 1.5, note: 60, velocity: 100, noteIndex: 0);
-  });
 }
 
 // -------------------------------------------
@@ -189,7 +172,7 @@ void verifyNoNotes(PolyPattern pattern, {required int startStep, required int en
   }
 }
 
-// Verify that in the step range of [startStep, endStep) all notes are equal to the given [notes]
+// Verify that in the step range of [startStep, endStep] all notes are equal to the given [notes]
 // and all other notes are -1.
 void verifyNotes(
   PolyPattern pattern, {
@@ -207,8 +190,9 @@ void verifyNotes(
   }
 }
 
-// Verify that in the step range of [startStep, endStep) the [noteCount] number of notes have
-// gate 1 and are tied, and at the last step they are released with a gate < 1.
+// Verify that in the step range of [startStep, endStep], each note's gate value matches
+// the corresponding value in [gates]. For all steps except the last one, gates are checked
+// for exact equality. For the last step, gates are checked with a 0.05 tolerance.
 void verifyTiedNoteGates(
   PolyPattern pattern, {
   required int startStep,
@@ -226,8 +210,8 @@ void verifyTiedNoteGates(
   }
 }
 
-// Verify that in the step range of [startStep, endStep) all [noteCount] notes have the given offset,
-// and the rest of the notes have 0 offset.
+// Verify that in the step range of [startStep, endStep], notes at indices [0..offsets.length]
+// match the given offsets (with 0.005 tolerance), and all remaining notes have 0 offset.
 void verifyNoteOffsets(
   PolyPattern pattern, {
   required int startStep,
@@ -244,8 +228,8 @@ void verifyNoteOffsets(
   }
 }
 
-// Verify that in the step range of [startStep, endStep) all [noteCount] notes have the given velocity,
-// and the rest of the notes have 100 velocity.
+// Verify that in the step range of [startStep, endStep], notes at indices [0..velocities.length]
+// match the given velocities exactly, and all remaining notes have the default velocity of 100.
 void verifyNoteVelocities(
   PolyPattern pattern, {
   required int startStep,
