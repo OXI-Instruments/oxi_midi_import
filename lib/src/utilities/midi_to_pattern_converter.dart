@@ -4,12 +4,14 @@ import 'package:oxi_midi_import/src/models/poly_pattern.dart';
 
 class MidiToPatternConverter {
   static const defaultTicksPerStep = 24;
+  static const _maxStepCount = 128;
 
   static Future<PolyPattern> createPolyPatternFrom(List<Note> notes, int length, {int ticksPerStep = defaultTicksPerStep}) async {
-    final stepLength = (length / ticksPerStep).ceil();
+    int stepLength = (length / ticksPerStep).ceil();
 
-    if (stepLength > 128) {
-      throw Exception('stepLength is too long: $stepLength');
+    if (stepLength > _maxStepCount) {
+      // throw Exception('stepLength is too long: $stepLength');
+       stepLength = _maxStepCount;
     }
 
     List<PolyPatternStep> steps = List.generate(stepLength, (index) {
@@ -26,6 +28,10 @@ class MidiToPatternConverter {
         final int initialOffset = noteStartTicks % ticksPerStep;
         final int endInset = ticksPerStep - noteEndTicks % ticksPerStep;
 
+        if (endIndex >= _maxStepCount) {
+          continue;
+        }
+        
         for (int stepIndex = startIndex; stepIndex <= endIndex; stepIndex++) {
           // find the first note slot
           final noteIndex = steps[stepIndex].notes.indexOf(-1);
@@ -42,6 +48,7 @@ class MidiToPatternConverter {
         }
       }
     } catch (e) {
+      print('Error in createPolyPatternFrom: $e');
       rethrow;
     }
 
@@ -50,8 +57,12 @@ class MidiToPatternConverter {
 
   static MonoPattern createMonoPatternFrom(List<Note> notes, int length, {int ticksPerStep = defaultTicksPerStep}) {
     // TODO: handle glides for overlapping notes
+    int stepLength = (length / ticksPerStep).ceil();
 
-    final stepLength = (length / ticksPerStep).ceil();
+    if (stepLength > _maxStepCount) {
+      // throw Exception('stepLength is too long: $stepLength');
+       stepLength = _maxStepCount;
+    }
 
     List<MonoPatternStep> steps = List.generate(stepLength, (index) {
       return MonoPatternStep.empty();
@@ -67,6 +78,10 @@ class MidiToPatternConverter {
         final int initialOffset = noteStartTicks % ticksPerStep;
         final int endInset = ticksPerStep - noteEndTicks % ticksPerStep;
         final int velocity = note.velocity;
+
+        if (endIndex >= _maxStepCount) {
+          continue;
+        }
 
         for (int stepIndex = startIndex; stepIndex <= endIndex; stepIndex++) {
           final offsetInTicks = stepIndex == startIndex ? initialOffset : 0;
